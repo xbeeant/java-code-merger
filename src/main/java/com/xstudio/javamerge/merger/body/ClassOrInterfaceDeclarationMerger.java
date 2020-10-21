@@ -96,6 +96,7 @@ public class ClassOrInterfaceDeclarationMerger extends AbstractTypeMerger<ClassO
             } else {
                 nodeList.add(firstNode);
             }
+            found = null;
         }
 
 

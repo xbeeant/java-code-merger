@@ -3,6 +3,7 @@ package com.xstudio.javamerge;
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
@@ -28,6 +29,7 @@ import com.xstudio.javamerge.merger.ast.type.TypeParameterMerger;
 import com.xstudio.javamerge.merger.ast.type.VoidTypeMerger;
 import com.xstudio.javamerge.merger.body.FieldDeclarationMerger;
 import com.xstudio.javamerge.merger.body.MethodDeclarationMerger;
+import com.xstudio.javamerge.merger.body.ParameterMerger;
 import com.xstudio.javamerge.merger.comments.CommentMerger;
 import com.xstudio.javamerge.merger.comments.JavadocCommentMerger;
 import com.xstudio.javamerge.merger.comments.LineCommentMerger;
@@ -73,6 +75,7 @@ public abstract class AbstractNodeMerger<N extends Node> {
         // ast.body
         map.put(FieldDeclaration.class, new FieldDeclarationMerger());
         map.put(MethodDeclaration.class, new MethodDeclarationMerger());
+        map.put(Parameter.class, new ParameterMerger());
         // ast.stmt
         map.put(BlockStmt.class, new BlockStmtMerger());
         map.put(Statement.class, new StatementMerger());

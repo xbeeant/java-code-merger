@@ -1,7 +1,9 @@
 package com.xstudio.javamerge.merger.body;
 
 import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
@@ -18,7 +20,12 @@ import java.util.Optional;
 public class MethodDeclarationMerger extends AbstractNodeMerger<MethodDeclaration> {
     @Override
     public boolean isEqual(MethodDeclaration first, MethodDeclaration second) {
-        return first.getName().equals(second.getName());
+        boolean nameEquals = first.getName().equals(second.getName());
+        if (nameEquals) {
+            return first.getParameters().size() == second.getParameters().size();
+        }
+
+        return nameEquals;
     }
 
     @Override
@@ -43,11 +50,20 @@ public class MethodDeclarationMerger extends AbstractNodeMerger<MethodDeclaratio
         }
 
         // body
-        AbstractNodeMerger<BlockStmt> blockStmtMerger = AbstractNodeMerger.getMerger(BlockStmt.class, isKeepFirstWhenConflict());
-        Optional<BlockStmt> blockStmtOptional = blockStmtMerger.merge(first.getBody(), second.getBody());
-        if (blockStmtOptional.isPresent()) {
-            methodDeclaration.setBody(blockStmtOptional.get());
+        boolean isInterface = ((ClassOrInterfaceDeclaration) first.getParentNode().get()).isInterface();
+        if (isInterface) {
+            methodDeclaration.setBody(null);
+        } else {
+            AbstractNodeMerger<BlockStmt> blockStmtMerger = AbstractNodeMerger.getMerger(BlockStmt.class, isKeepFirstWhenConflict());
+            Optional<BlockStmt> blockStmtOptional = blockStmtMerger.merge(first.getBody(), second.getBody());
+            if (blockStmtOptional.isPresent()) {
+                methodDeclaration.setBody(blockStmtOptional.get());
+            }
         }
+
+        // set parameters
+        AbstractNodeMerger<Parameter> parameterMerger = AbstractNodeMerger.getMerger(Parameter.class, isKeepFirstWhenConflict());
+        methodDeclaration.setParameters(parameterMerger.mergeCollection(first.getParameters(), second.getParameters()));
 
         return methodDeclaration;
     }
