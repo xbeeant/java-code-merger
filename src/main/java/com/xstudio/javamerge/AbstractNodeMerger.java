@@ -12,10 +12,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.type.TypeParameter;
-import com.github.javaparser.ast.type.VoidType;
+import com.github.javaparser.ast.type.*;
 import com.xstudio.javamerge.merger.ast.ImportDeclarationMerger;
 import com.xstudio.javamerge.merger.ast.ModifierMerger;
 import com.xstudio.javamerge.merger.ast.PackageDeclarationMerger;
@@ -23,10 +20,7 @@ import com.xstudio.javamerge.merger.ast.expr.*;
 import com.xstudio.javamerge.merger.ast.stmt.BlockStmtMerger;
 import com.xstudio.javamerge.merger.ast.stmt.ExpressionStmtMerger;
 import com.xstudio.javamerge.merger.ast.stmt.StatementMerger;
-import com.xstudio.javamerge.merger.ast.type.ClassOrInterfaceTypeMerger;
-import com.xstudio.javamerge.merger.ast.type.TypeMerger;
-import com.xstudio.javamerge.merger.ast.type.TypeParameterMerger;
-import com.xstudio.javamerge.merger.ast.type.VoidTypeMerger;
+import com.xstudio.javamerge.merger.ast.type.*;
 import com.xstudio.javamerge.merger.body.FieldDeclarationMerger;
 import com.xstudio.javamerge.merger.body.MethodDeclarationMerger;
 import com.xstudio.javamerge.merger.body.ParameterMerger;
@@ -61,6 +55,7 @@ public abstract class AbstractNodeMerger<N extends Node> {
         map.put(Type.class, new TypeMerger());
         map.put(VoidType.class, new VoidTypeMerger());
         map.put(TypeParameter.class, new TypeParameterMerger());
+        map.put(PrimitiveType.class, new PrimitiveTypeMerger());
 
         // ast.expr
         map.put(AnnotationExpr.class, new AnnotationExprMerger());
