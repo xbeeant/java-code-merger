@@ -84,11 +84,13 @@ public abstract class AbstractNodeMerger<N extends Node> {
     private boolean keepFirstWhenConflict;
 
     /**
+     * 得到合并
      * 获得合并器
      *
      * @param clazz                 clazz
-     * @param keepFirstWhenConflict
-     * @return {@link AbstractNodeMerger <T>}
+     * @param keepFirstWhenConflict 是否保持原有文件
+     * @param <T>                   class extends Node
+     * @return Node
      */
     public static <T extends Node> AbstractNodeMerger<T> getMerger(Class<T> clazz, boolean keepFirstWhenConflict) {
         AbstractNodeMerger<T> merger = null;
@@ -158,7 +160,7 @@ public abstract class AbstractNodeMerger<N extends Node> {
      *
      * @param first  第一个
      * @param second 第二个
-     * @return {@link Optional<N>}
+     * @return {@link Optional}
      */
     public N doMerge(N first, N second) {
         return isKeepFirstWhenConflict() ? first : second;
@@ -177,7 +179,7 @@ public abstract class AbstractNodeMerger<N extends Node> {
      *
      * @param first  第一个
      * @param second 第二个
-     * @return {@link Optional<N>}
+     * @return {@link Optional}
      */
     public Optional<N> merge(N first, N second) {
         return merge(Optional.of(first), Optional.of(second));
@@ -188,7 +190,7 @@ public abstract class AbstractNodeMerger<N extends Node> {
      *
      * @param first  第一个
      * @param second 第二个
-     * @return {@link Optional<N>}
+     * @return {@link Optional}
      */
     public Optional<N> merge(Optional<N> first, Optional<N> second) {
         if (!first.isPresent()) {

@@ -21,25 +21,20 @@ public abstract class AbstractTypeMerger<N extends TypeDeclaration<?>> {
 
     private static final ConcurrentHashMap<Class, AbstractTypeMerger> map = new ConcurrentHashMap<>();
 
-    private boolean keepFirstWhenConflict;
-
     static {
         map.put(ClassOrInterfaceDeclaration.class, new ClassOrInterfaceDeclarationMerger());
     }
 
-    public boolean isKeepFirstWhenConflict() {
-        return keepFirstWhenConflict;
-    }
-
-    public void setKeepFirstWhenConflict(boolean keepFirstWhenConflict) {
-        this.keepFirstWhenConflict = keepFirstWhenConflict;
-    }
+    private boolean keepFirstWhenConflict;
 
     /**
+     * 得到合并
      * 获得合并器
      *
-     * @param clazz clazz
-     * @return {@link AbstractTypeMerger <T>}
+     * @param clazz                 clazz
+     * @param keepFirstWhenConflict 是否保留源文件
+     * @param <T>                   class extends Node
+     * @return {@link AbstractTypeMerger}
      */
     public static <T extends TypeDeclaration<?>> AbstractTypeMerger<T> getMerger(Class<T> clazz, boolean keepFirstWhenConflict) {
         AbstractTypeMerger<T> merger = null;
@@ -54,12 +49,20 @@ public abstract class AbstractTypeMerger<N extends TypeDeclaration<?>> {
         return merger;
     }
 
+    public boolean isKeepFirstWhenConflict() {
+        return keepFirstWhenConflict;
+    }
+
+    public void setKeepFirstWhenConflict(boolean keepFirstWhenConflict) {
+        this.keepFirstWhenConflict = keepFirstWhenConflict;
+    }
+
     /**
      * 合并
      *
      * @param first  第一个
      * @param second 第二个
-     * @return {@link Optional<N>}
+     * @return {@link Optional}
      */
     public N merge(N first, N second) {
         if (first == null) {
@@ -91,7 +94,7 @@ public abstract class AbstractTypeMerger<N extends TypeDeclaration<?>> {
      *
      * @param first  第一个
      * @param second 第二个
-     * @return {@link Optional<N>}
+     * @return {@link Optional}
      */
     public abstract N doMerge(N first, N second);
 
