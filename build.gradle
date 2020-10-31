@@ -113,7 +113,7 @@ publishing {
             pom {
                 name = "java-merger"
                 description = "xstudio-java-merger"
-                url = "https://maven.pkg.github.com/xbeeant/java-code-merger"
+                url = "https://github.com/xbeeant/java-code-merger/packages"
                 licenses {
                     license {
                         name = "MIT License"
@@ -128,9 +128,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "https://maven.pkg.github.com/xbeeant/java-code-merger"
-                    developerConnection = "https://maven.pkg.github.com/xbeeant/java-code-merger"
-                    url = "https://maven.pkg.github.com/xbeeant/java-code-merger"
+                    connection = "https://github.com/xbeeant/java-code-merger/packages"
+                    developerConnection = "https://github.com/xbeeant/java-code-merger/packages"
+                    url = "https://github.com/xbeeant/java-code-merger/packages"
                 }
             }
         }
