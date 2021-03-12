@@ -10,16 +10,13 @@ import java.util.List;
  * @author huangxiaobiao
  * @date 2020/10/21
  */
-public interface FirstInterface extends AbstractInterface<String> {
+public interface FirstInterface extends AbstractInterface<List<String>> {
     /**
      * method1
      *
-     * @param str2 param description
-     * @return {@link List &lt;String&gt;}
+     * @param str param description
+     * @return {@link List&lt;String&gt;}
      */
     @Override
-    String method1(String str2);
-
-
-    String method1(String str1, String str2);
+    List<String> method1(String str);
 }

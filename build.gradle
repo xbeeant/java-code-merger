@@ -4,10 +4,12 @@ plugins {
 }
 
 apply plugin: 'jacoco'
-apply plugin: "maven-publish"
+apply plugin: 'maven'
+apply plugin: 'signing'
 
-group 'com.xstudio'
-version '1.0-SNAPSHOT'
+group 'io.github.xbeeant'
+archivesBaseName = "java-merger"
+version '1.0.0-SNAPSHOT'
 
 repositories {
     maven {
@@ -93,44 +95,49 @@ artifacts {
     archives sourceJar
 }
 
-publishing {
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
     repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/xbeeant/java-code-merger")
-            credentials {
-                username = "huangxb0512@gmail.com"
-                password = System.getenv("token")
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: System.getenv("user"), password: System.getenv("pwd"))
             }
-        }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = 'java-merger'
-            from components.java
-            artifact sourceJar
-            artifact javadocJar
-            pom {
-                name = "java-merger"
-                description = "xstudio-java-merger"
-                url = "https://github.com/xbeeant/java-code-merger/packages"
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: System.getenv("user"), password: System.getenv("pwd"))
+            }
+
+            pom.project {
+                name 'Java Merger'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'a merger for different java class\'s '
+                url 'https://github.com/xbeeant/java-code-merger'
+
+                scm {
+                    connection = "https://github.com/xbeeant/java-code-merger"
+                    developerConnection = "https://github.com/xbeeant/java-code-merger"
+                    url = "https://github.com/xbeeant/java-code-merger"
+                }
+
                 licenses {
                     license {
                         name = "MIT License"
                         url = "https://mit-license.org/"
                     }
                 }
+
                 developers {
                     developer {
                         id = "beeant0512"
                         name = "Xiaobiao Huang"
                         email = "huangxb0512@gmail.com"
                     }
-                }
-                scm {
-                    connection = "https://github.com/xbeeant/java-code-merger/packages"
-                    developerConnection = "https://github.com/xbeeant/java-code-merger/packages"
-                    url = "https://github.com/xbeeant/java-code-merger/packages"
                 }
             }
         }

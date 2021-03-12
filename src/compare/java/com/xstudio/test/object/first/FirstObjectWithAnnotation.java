@@ -1,7 +1,7 @@
-package com.xstudio.test.object.first;
+package io.github.xbeeant.test.object.first;
 
 // import package comment override
-import com.xstudio.test.object.AbstractObject;
+import io.github.xbeeant.test.object.AbstractObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
