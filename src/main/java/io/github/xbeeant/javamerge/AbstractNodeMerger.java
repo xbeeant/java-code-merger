@@ -53,6 +53,7 @@ public abstract class AbstractNodeMerger<N extends Node> {
         // ast.type
         map.put(ClassOrInterfaceType.class, new ClassOrInterfaceTypeMerger());
         map.put(Type.class, new TypeMerger());
+        map.put(ArrayType.class, new ArrayTypeMerger());
         map.put(VoidType.class, new VoidTypeMerger());
         map.put(TypeParameter.class, new TypeParameterMerger());
         map.put(PrimitiveType.class, new PrimitiveTypeMerger());

@@ -2,7 +2,6 @@ package io.github.xbeeant.test.object.first;
 
 // import package comment
 import io.github.xbeeant.test.object.AbstractObject;
-import lombok.EqualsAndHashCode;
 
 /**
  * class comment for FirstObjectWithAnnotation
@@ -10,7 +9,6 @@ import lombok.EqualsAndHashCode;
  * @author xiaobiao
  * @version 1.0.0
  */
-@EqualsAndHashCode(callSuper = true)
 public class FirstObjectWithAnnotation extends AbstractObject<Long> {
     /**
      * first string
