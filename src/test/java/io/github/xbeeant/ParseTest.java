@@ -795,4 +795,149 @@ class ParseTest {
         CompilationUnit merge = JavaMerger.merge(unit1.getResult().get(), unit2.getResult().get(), true);
         System.out.printf(merge.toString());
     }
+
+    @Test
+    void testAst2() {
+        String source = "package io.github.xbeeant.easy.core.service.impl;\n" +
+                "\n" +
+                "import io.github.xbeeant.config.AbstractSecurityMybatisPageHelperServiceImpl;\n" +
+                "import io.github.xbeeant.core.IdWorker;\n" +
+                "import io.github.xbeeant.easy.core.mapper.UserMapper;\n" +
+                "import io.github.xbeeant.easy.core.model.User;\n" +
+                "import io.github.xbeeant.easy.core.service.IUserService;\n" +
+                "import io.github.xbeeant.spring.mybatis.pagehelper.IMybatisPageHelperDao;\n" +
+                "import org.springframework.beans.factory.annotation.Autowired;\n" +
+                "import org.springframework.stereotype.Service;\n" +
+                "\n" +
+                "/**\n" +
+                " * user\n" +
+                " */\n" +
+                "@Service\n" +
+                "public class UserServiceImpl extends AbstractSecurityMybatisPageHelperServiceImpl<User, Long> implements IUserService {\n" +
+                "\n" +
+                "    @Autowired\n" +
+                "    private UserMapper userMapper;\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public IMybatisPageHelperDao<User, Long> getRepositoryDao() {\n" +
+                "        return this.userMapper;\n" +
+                "    }\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public void setDefaults(User record) {\n" +
+                "        if (record.getId() != null) {\n" +
+                "            record.setId(IdWorker.getId());\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n";
+
+        String source2 =
+                "package io.github.xbeeant.easy.core.service.impl;\n" +
+                        "\n" +
+                        "import io.github.xbeeant.core.date.DateTime;\n" +
+                        "import io.github.xbeeant.easy.core.mapper.UserMapper;\n" +
+                        "import io.github.xbeeant.easy.core.model.User;\n" +
+                        "import io.github.xbeeant.easy.core.service.IUserService;\n" +
+                        "import io.github.xbeeant.easy.config.AbstractSecurityMybatisPageHelperServiceImpl;\n" +
+                        "import io.github.xbeeant.easy.rest.vo.RegisterVo;\n" +
+                        "import io.github.xbeeant.core.ApiResponse;\n" +
+                        "import io.github.xbeeant.core.IdWorker;\n" +
+                        "import io.github.xbeeant.spring.mybatis.pagehelper.IMybatisPageHelperDao;\n" +
+                        "import io.github.xbeeant.spring.security.LoginUser;\n" +
+                        "import org.springframework.beans.factory.annotation.Autowired;\n" +
+                        "import org.springframework.security.core.userdetails.UsernameNotFoundException;\n" +
+                        "import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;\n" +
+                        "import org.springframework.stereotype.Service;\n" +
+                        "import java.util.Collections;\n" +
+                        "\n" +
+                        "/**\n" +
+                        " * 账号\n" +
+                        " */\n" +
+                        "@Service\n" +
+                        "public class UserServiceImpl extends AbstractSecurityMybatisPageHelperServiceImpl<User, Long> implements IUserService {\n" +
+                        "\n" +
+                        "    @Autowired\n" +
+                        "    private UserMapper userMapper;\n" +
+                        "\n" +
+                        "    private static final BCryptPasswordEncoder B_CRYPT_PASSWORD_ENCODER = new BCryptPasswordEncoder();\n" +
+                        "\n" +
+                        "    @Override\n" +
+                        "    public boolean checkPassword(User user, String rawPassword, String ip) {\n" +
+                        "        return B_CRYPT_PASSWORD_ENCODER.matches(rawPassword, user.getPassword());\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    @Override\n" +
+                        "    public LoginUser<User> loadUserByUsername(String username) {\n" +
+                        "        User user = userMapper.selectByUsername(username);\n" +
+                        "        if (null == user) {\n" +
+                        "            throw new UsernameNotFoundException(\"账号或密码错误\");\n" +
+                        "        }\n" +
+                        "        // 获取权限\n" +
+                        "        LoginUser<User> loginUser = new LoginUser<>(String.valueOf(user.getId()), user.getNickname(), username, user.getPassword(), Collections.emptyList());\n" +
+                        "        loginUser.setDetails(user);\n" +
+                        "        return loginUser;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    @Override\n" +
+                        "    public ApiResponse<String> register(RegisterVo record) {\n" +
+                        "        ApiResponse<String> result = new ApiResponse<>();\n" +
+                        "        // 密码一致性校验\n" +
+                        "        if (!record.getPassword().equals(record.getConfirm())) {\n" +
+                        "            result.setResult(1, \"两次密码不一致\");\n" +
+                        "            return result;\n" +
+                        "        }\n" +
+                        "        // 手机号唯一性验证\n" +
+                        "        User example = new User();\n" +
+                        "        example.setMobile(record.getMobile());\n" +
+                        "        ApiResponse<User> existChkRst = selectOneByExample(example);\n" +
+                        "        if (existChkRst.getSuccess()) {\n" +
+                        "            result.setResult(2, \"手机号已被注册\");\n" +
+                        "            return result;\n" +
+                        "        }\n" +
+                        "        // 邮箱唯一性验证\n" +
+                        "        example = new User();\n" +
+                        "        example.setEmail(record.getMail());\n" +
+                        "        existChkRst = selectOneByExample(example);\n" +
+                        "        if (existChkRst.getSuccess()) {\n" +
+                        "            result.setResult(2, \"邮箱已被注册\");\n" +
+                        "            return result;\n" +
+                        "        }\n" +
+                        "        example = new User();\n" +
+                        "        example.setAccount(record.getMobile());\n" +
+                        "        example.setEmail(record.getMail());\n" +
+                        "        example.setMobile(record.getMobile());\n" +
+                        "        example.setPrefix(record.getPrefix());\n" +
+                        "        example.setPassword(B_CRYPT_PASSWORD_ENCODER.encode(record.getPassword()));\n" +
+                        "        ApiResponse<User> userApiResponse = insertSelective(example);\n" +
+                        "        // result\n" +
+                        "        result.setResult(userApiResponse.getCode(), userApiResponse.getMsg());\n" +
+                        "        return result;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    @Override\n" +
+                        "    public IMybatisPageHelperDao<User, Long> getRepositoryDao() {\n" +
+                        "        return this.userMapper;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    @Override\n" +
+                        "    public void setDefaults(User record) {\n" +
+                        "        if (record.getId() == null) {\n" +
+                        "            record.setId(IdWorker.getId());\n" +
+                        "        }\n" +
+                        "        if (null != record.getPassword()) {\n" +
+                        "            record.setPassword(B_CRYPT_PASSWORD_ENCODER.encode(record.getPassword()));\n" +
+                        "        }\n" +
+                        "        record.setCreateAt(new DateTime());\n" +
+                        "        record.setUpdateAt(new DateTime());\n" +
+                        "    }\n" +
+                        "}\n";
+
+        JavaParser javaParser = new JavaParser();
+
+        ParseResult<CompilationUnit> unit1 = javaParser.parse(source);
+        ParseResult<CompilationUnit> unit2 = javaParser.parse(source2);
+
+        CompilationUnit merge = JavaMerger.merge(unit1.getResult().get(), unit2.getResult().get(), true);
+        System.out.printf(merge.toString());
+    }
 }

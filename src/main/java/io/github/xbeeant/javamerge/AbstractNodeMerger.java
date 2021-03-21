@@ -8,10 +8,7 @@ import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.*;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import io.github.xbeeant.javamerge.merger.ast.ImportDeclarationMerger;
 import io.github.xbeeant.javamerge.merger.ast.ModifierMerger;
@@ -67,6 +64,7 @@ public abstract class AbstractNodeMerger<N extends Node> {
         map.put(Expression.class, new ExpressionMerger());
         map.put(VariableDeclarationExpr.class, new VariableDeclarationExprMerger());
         map.put(ReturnStmt.class, new ReturnStmtMerger());
+        map.put(IfStmt.class, new IfStmtMerger());
 
         // ast.body
         map.put(FieldDeclaration.class, new FieldDeclarationMerger());
@@ -124,7 +122,8 @@ public abstract class AbstractNodeMerger<N extends Node> {
         N found = null;
         for (N firstNode : first) {
             for (N secondNode : secondCopies) {
-                if (isEqual(firstNode, secondNode)) {
+                if (firstNode.getClass().equals(secondNode.getClass())
+                        && isEqual(firstNode, secondNode)) {
                     found = secondNode;
                     break;
                 }
