@@ -1,0 +1,8 @@
+com.xstudio.javamerge
+com.xstudio.javamerge.merger
+com.xstudio.javamerge.merger.ast
+com.xstudio.javamerge.merger.ast.expr
+com.xstudio.javamerge.merger.ast.stmt
+com.xstudio.javamerge.merger.ast.type
+com.xstudio.javamerge.merger.body
+com.xstudio.javamerge.merger.comments
