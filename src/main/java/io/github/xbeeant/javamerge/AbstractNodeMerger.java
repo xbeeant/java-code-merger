@@ -61,10 +61,11 @@ public abstract class AbstractNodeMerger<N extends Node> {
         map.put(NormalAnnotationExpr.class, new NormalAnnotationExprMerger());
         map.put(SimpleName.class, new SimpleNameMerger());
         map.put(Name.class, new NameMerger());
+        map.put(BinaryExpr.class, new BinaryExprMerger());
+        map.put(AssignExpr.class, new AssignExprMerger());
         map.put(Expression.class, new ExpressionMerger());
         map.put(VariableDeclarationExpr.class, new VariableDeclarationExprMerger());
         map.put(ReturnStmt.class, new ReturnStmtMerger());
-        map.put(IfStmt.class, new IfStmtMerger());
 
         // ast.body
         map.put(FieldDeclaration.class, new FieldDeclarationMerger());
@@ -72,8 +73,10 @@ public abstract class AbstractNodeMerger<N extends Node> {
         map.put(Parameter.class, new ParameterMerger());
         // ast.stmt
         map.put(BlockStmt.class, new BlockStmtMerger());
-        map.put(Statement.class, new StatementMerger());
+        map.put(IfStmt.class, new IfStmtMerger());
         map.put(ExpressionStmt.class, new ExpressionStmtMerger());
+        map.put(Statement.class, new StatementMerger());
+
         // comments
         map.put(Comment.class, new CommentMerger());
         map.put(LineComment.class, new LineCommentMerger());
@@ -103,6 +106,24 @@ public abstract class AbstractNodeMerger<N extends Node> {
         return merger;
     }
 
+    public N doMerge(Optional<N> optional1, Optional<N> optional2) {
+
+        if (optional1.isPresent() && optional2.isPresent()) {
+            AbstractNodeMerger merger = AbstractNodeMerger.getMerger(optional1.get().getClass(), isKeepFirstWhenConflict());
+            return (N) merger.doMerge(optional1.get(), optional2.get());
+        }
+
+        if (optional1.isPresent() && !optional2.isPresent()) {
+            return optional1.get();
+        }
+
+        if (optional2.isPresent() && !optional1.isPresent()) {
+            return optional2.get();
+        }
+
+        return null;
+    }
+
     public boolean isEqual(NodeList<N> first, NodeList<N> second) {
         if (first.isEmpty() && second.isEmpty()) {
             return true;
@@ -121,17 +142,18 @@ public abstract class AbstractNodeMerger<N extends Node> {
         // todo
         N found = null;
         for (N firstNode : first) {
+            AbstractNodeMerger merger = AbstractNodeMerger.getMerger(firstNode.getClass(), isKeepFirstWhenConflict());
             for (N secondNode : secondCopies) {
                 if (firstNode.getClass().equals(secondNode.getClass())
-                        && isEqual(firstNode, secondNode)) {
+                        && merger.isEqual(firstNode, secondNode)) {
                     found = secondNode;
                     break;
                 }
             }
 
             if (null != found) {
-                Optional<N> mergeResult = Optional.of(doMerge(firstNode, found));
-                nodeList.add(mergeResult.get());
+                N node = (N) merger.doMerge(firstNode, found);
+                nodeList.add(node);
                 secondCopies.remove(found);
             } else {
                 nodeList.add(firstNode);
@@ -164,6 +186,15 @@ public abstract class AbstractNodeMerger<N extends Node> {
      */
     public N doMerge(N first, N second) {
         return isKeepFirstWhenConflict() ? first : second;
+    }
+
+    public boolean isEqual(Optional<N> optional1, Optional<N> optional2) {
+        if (optional1.isPresent() && optional2.isPresent()) {
+            AbstractNodeMerger merger = AbstractNodeMerger.getMerger(optional1.get().getClass(), isKeepFirstWhenConflict());
+            return merger.isEqual(optional1.get(), optional2.get());
+        }
+
+        return optional1.isPresent() == optional2.isPresent();
     }
 
     public boolean isKeepFirstWhenConflict() {
@@ -200,12 +231,12 @@ public abstract class AbstractNodeMerger<N extends Node> {
         if (!second.isPresent()) {
             return first;
         }
-
-        if (isEqual(first.get(), second.get())) {
+        AbstractNodeMerger merger = AbstractNodeMerger.getMerger(first.get().getClass(), isKeepFirstWhenConflict());
+        if (merger.isEqual(first.get(), second.get())) {
             return first;
         }
 
-        return Optional.of(doMerge(first.get(), second.get()));
+        return Optional.of((N) merger.doMerge(first.get(), second.get()));
     }
 
     public Optional<NodeList<N>> mergeCollection(Optional<NodeList<N>> first, Optional<NodeList<N>> second) {
@@ -213,11 +244,7 @@ public abstract class AbstractNodeMerger<N extends Node> {
             return second;
         }
 
-        if (!second.isPresent()) {
-            return first;
-        }
-
-        return Optional.of(mergeCollection(first.get(), second.get()));
+        return second.map(ns -> Optional.of(mergeCollection(first.get(), ns))).orElse(first);
     }
 
     public NodeList<N> mergeCollection(NodeList<N> first, NodeList<N> second) {
@@ -233,16 +260,17 @@ public abstract class AbstractNodeMerger<N extends Node> {
         NodeList<N> secondCopies = new NodeList<>(second);
         N found = null;
         for (N firstNode : first) {
+            AbstractNodeMerger merger = AbstractNodeMerger.getMerger(firstNode.getClass(), isKeepFirstWhenConflict());
             for (N secondNode : secondCopies) {
-                if (isEqual(firstNode, secondNode)) {
+                if (merger.isEqual(firstNode, secondNode)) {
                     found = secondNode;
                     break;
                 }
             }
 
             if (null != found) {
-                Optional<N> mergeResult = Optional.of(doMerge(firstNode, found));
-                nodeList.add(mergeResult.get());
+                N mergeResult = (N) merger.doMerge(firstNode, found);
+                nodeList.add(mergeResult);
                 secondCopies.remove(found);
             } else {
                 nodeList.add(firstNode);

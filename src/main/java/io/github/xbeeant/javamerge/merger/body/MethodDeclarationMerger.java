@@ -9,8 +9,6 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
 import io.github.xbeeant.javamerge.AbstractNodeMerger;
 
-import java.util.Optional;
-
 /**
  * 方法声明合并
  *
@@ -35,7 +33,7 @@ public class MethodDeclarationMerger extends AbstractNodeMerger<MethodDeclaratio
         methodDeclaration.setName(first.getName());
         // method type
         AbstractNodeMerger<Type> typeMerger = AbstractNodeMerger.getMerger(Type.class, isKeepFirstWhenConflict());
-        methodDeclaration.setType(typeMerger.merge(first.getType(), second.getType()).get());
+        methodDeclaration.setType(typeMerger.doMerge(first.getType(), second.getType()));
 
         AbstractNodeMerger<Modifier> modifierMerger = AbstractNodeMerger.getMerger(Modifier.class, isKeepFirstWhenConflict());
         methodDeclaration.setModifiers(modifierMerger.mergeCollection(first.getModifiers(), second.getModifiers()));
@@ -44,10 +42,8 @@ public class MethodDeclarationMerger extends AbstractNodeMerger<MethodDeclaratio
 
         // method comment
         AbstractNodeMerger<Comment> commentMerger = AbstractNodeMerger.getMerger(Comment.class, isKeepFirstWhenConflict());
-        Optional<Comment> commentOptional = commentMerger.merge(first.getComment(), second.getComment());
-        if (commentOptional.isPresent()) {
-            methodDeclaration.setComment(commentOptional.get());
-        }
+        Comment comment = commentMerger.doMerge(first.getComment(), second.getComment());
+        methodDeclaration.setComment(comment);
 
         // body
         boolean isInterface = ((ClassOrInterfaceDeclaration) first.getParentNode().get()).isInterface();
@@ -55,10 +51,8 @@ public class MethodDeclarationMerger extends AbstractNodeMerger<MethodDeclaratio
             methodDeclaration.setBody(null);
         } else {
             AbstractNodeMerger<BlockStmt> blockStmtMerger = AbstractNodeMerger.getMerger(BlockStmt.class, isKeepFirstWhenConflict());
-            Optional<BlockStmt> blockStmtOptional = blockStmtMerger.merge(first.getBody(), second.getBody());
-            if (blockStmtOptional.isPresent()) {
-                methodDeclaration.setBody(blockStmtOptional.get());
-            }
+            BlockStmt blockStmtOptional = blockStmtMerger.doMerge(first.getBody(), second.getBody());
+            methodDeclaration.setBody(blockStmtOptional);
         }
 
         // set parameters

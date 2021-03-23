@@ -32,7 +32,8 @@ public class CompilationUnitMerger {
         CompilationUnit cu = new CompilationUnit();
 
         AbstractNodeMerger<PackageDeclaration> packageDeclarationMerger = AbstractNodeMerger.getMerger(PackageDeclaration.class, keepFirstWhenConflict);
-        cu.setPackageDeclaration(packageDeclarationMerger.merge(first.getPackageDeclaration(), second.getPackageDeclaration()).get());
+        Optional<PackageDeclaration> packageDeclaration = packageDeclarationMerger.merge(first.getPackageDeclaration(), second.getPackageDeclaration());
+        packageDeclaration.ifPresent(cu::setPackageDeclaration);
 
         AbstractNodeMerger<ImportDeclaration> importDeclarationMerger = AbstractNodeMerger.getMerger(ImportDeclaration.class, keepFirstWhenConflict);
         cu.setImports(importDeclarationMerger.mergeCollection(first.getImports(), second.getImports()));

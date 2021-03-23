@@ -11,8 +11,6 @@ import com.github.javaparser.ast.CompilationUnit;
 public class JavaMerger {
     public static CompilationUnit merge(CompilationUnit first, CompilationUnit second, boolean keepFirstWhenConflict) {
         CompilationUnitMerger merger = new CompilationUnitMerger();
-        CompilationUnit result = merger.merge(first, second, keepFirstWhenConflict);
-        
-        return result;
+        return merger.merge(first, second, keepFirstWhenConflict);
     }
 }

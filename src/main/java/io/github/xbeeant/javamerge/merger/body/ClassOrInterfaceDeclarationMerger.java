@@ -25,7 +25,16 @@ public class ClassOrInterfaceDeclarationMerger extends AbstractTypeMerger<ClassO
     @Override
     public boolean isEqual(ClassOrInterfaceDeclaration first, ClassOrInterfaceDeclaration second) {
         AbstractNodeMerger<SimpleName> nameMerger = AbstractNodeMerger.getMerger(SimpleName.class, isKeepFirstWhenConflict());
-        return nameMerger.isEqual(first.getName(), second.getName());
+        boolean isNameEqual = nameMerger.isEqual(first.getName(), second.getName());
+        AbstractNodeMerger<ClassOrInterfaceType> classOrInterfaceTypeMerger = AbstractNodeMerger.getMerger(ClassOrInterfaceType.class, isKeepFirstWhenConflict());
+        boolean isExtendedTypeEqual = classOrInterfaceTypeMerger.isEqual(first.getExtendedTypes(), second.getExtendedTypes());
+
+        boolean isImplementedTypeEqual = classOrInterfaceTypeMerger.isEqual(first.getImplementedTypes(), second.getImplementedTypes());
+
+        AbstractNodeMerger<TypeParameter> typeParameterMerger = AbstractNodeMerger.getMerger(TypeParameter.class, isKeepFirstWhenConflict());
+        boolean isTypeParameterEqual = typeParameterMerger.isEqual(first.getTypeParameters(), second.getTypeParameters());
+
+        return isNameEqual && isExtendedTypeEqual && isImplementedTypeEqual && isTypeParameterEqual;
     }
 
     @Override
@@ -44,9 +53,7 @@ public class ClassOrInterfaceDeclarationMerger extends AbstractTypeMerger<ClassO
         // set comments
         AbstractNodeMerger<Comment> commentMerger = AbstractNodeMerger.getMerger(Comment.class, isKeepFirstWhenConflict());
         Optional<Comment> commentOpt = commentMerger.merge(first.getComment(), second.getComment());
-        if (commentOpt.isPresent()) {
-            coid.setComment(commentOpt.get());
-        }
+        commentOpt.ifPresent(coid::setComment);
 
         // set annotation
         AbstractNodeMerger<AnnotationExpr> annotationDeclarationMerger = AbstractNodeMerger.getMerger(AnnotationExpr.class, isKeepFirstWhenConflict());

@@ -12,7 +12,12 @@ import io.github.xbeeant.javamerge.AbstractNodeMerger;
 public class ExpressionMerger extends AbstractNodeMerger<Expression> {
     @Override
     public boolean isEqual(Expression first, Expression second) {
-        return first.toString().equals(second.toString());
+        if (first.getClass().equals(second.getClass())) {
+            AbstractNodeMerger merger = AbstractNodeMerger.getMerger(first.getClass(), isKeepFirstWhenConflict());
+            return merger.isEqual(first, second);
+        }
+
+        return false;
     }
 
     @Override

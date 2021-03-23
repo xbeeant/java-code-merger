@@ -1,5 +1,6 @@
 package io.github.xbeeant.javamerge.merger.ast.stmt;
 
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import io.github.xbeeant.javamerge.AbstractNodeMerger;
@@ -19,6 +20,15 @@ public class BlockStmtMerger extends AbstractNodeMerger<BlockStmt> {
 
     @Override
     public BlockStmt doMerge(BlockStmt first, BlockStmt second) {
-        return super.doMerge(first, second);
+        BlockStmt blockStmt = new BlockStmt();
+        NodeList<Statement> firstStatements = first.getStatements();
+        NodeList<Statement> secondStatements = second.getStatements();
+
+        AbstractNodeMerger<Statement> statementMerger = AbstractNodeMerger.getMerger(Statement.class, isKeepFirstWhenConflict()) ;
+
+        NodeList<Statement> statements = statementMerger.mergeCollection(firstStatements, secondStatements);
+        blockStmt.setStatements(statements);
+
+        return blockStmt;
     }
 }
