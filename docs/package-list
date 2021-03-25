@@ -1,8 +1,8 @@
-com.xstudio.javamerge
-com.xstudio.javamerge.merger
-com.xstudio.javamerge.merger.ast
-com.xstudio.javamerge.merger.ast.expr
-com.xstudio.javamerge.merger.ast.stmt
-com.xstudio.javamerge.merger.ast.type
-com.xstudio.javamerge.merger.body
-com.xstudio.javamerge.merger.comments
+io.github.xbeeant.javamerge
+io.github.xbeeant.javamerge.merger
+io.github.xbeeant.javamerge.merger.ast
+io.github.xbeeant.javamerge.merger.ast.expr
+io.github.xbeeant.javamerge.merger.ast.stmt
+io.github.xbeeant.javamerge.merger.ast.type
+io.github.xbeeant.javamerge.merger.body
+io.github.xbeeant.javamerge.merger.comments
