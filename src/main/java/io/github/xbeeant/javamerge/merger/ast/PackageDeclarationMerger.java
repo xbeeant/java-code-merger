@@ -4,6 +4,8 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.expr.Name;
 import io.github.xbeeant.javamerge.AbstractNodeMerger;
 
+import java.util.Optional;
+
 /**
  * 包声明合并
  *
@@ -15,11 +17,7 @@ public class PackageDeclarationMerger extends AbstractNodeMerger<PackageDeclarat
     @Override
     public boolean isEqual(PackageDeclaration first, PackageDeclaration second) {
         AbstractNodeMerger<Name> nameMerger = AbstractNodeMerger.getMerger(Name.class, isKeepFirstWhenConflict());
-        if (!nameMerger.isEqual(first.getName(), second.getName())) {
-            return false;
-        }
-
-        return false;
+        return nameMerger.isEqual(first.getName(), second.getName());
     }
 
     @Override
@@ -27,7 +25,9 @@ public class PackageDeclarationMerger extends AbstractNodeMerger<PackageDeclarat
         AbstractNodeMerger<Name> nameMerger = AbstractNodeMerger.getMerger(Name.class, isKeepFirstWhenConflict());
 
         PackageDeclaration packageDeclaration = new PackageDeclaration();
-        packageDeclaration.setName(nameMerger.merge(first.getName(), second.getName()).get());
+        Optional<Name> nameMergeResult = nameMerger.merge(first.getName(), second.getName());
+        nameMergeResult.ifPresent(packageDeclaration::setName);
+
         return packageDeclaration;
     }
 }
