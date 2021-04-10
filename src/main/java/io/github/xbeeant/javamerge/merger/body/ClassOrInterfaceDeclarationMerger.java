@@ -59,9 +59,12 @@ public class ClassOrInterfaceDeclarationMerger extends AbstractTypeMerger<ClassO
         AbstractNodeMerger<AnnotationExpr> annotationDeclarationMerger = AbstractNodeMerger.getMerger(AnnotationExpr.class, isKeepFirstWhenConflict());
         coid.setAnnotations(annotationDeclarationMerger.mergeCollection(first.getAnnotations(), second.getAnnotations()));
 
-        // set extendedTypes
         AbstractNodeMerger<ClassOrInterfaceType> classOrInterfaceTypeMerger = AbstractNodeMerger.getMerger(ClassOrInterfaceType.class, isKeepFirstWhenConflict());
+        // set extendedTypes
         coid.setExtendedTypes(classOrInterfaceTypeMerger.mergeCollection(first.getExtendedTypes(), second.getExtendedTypes()));
+
+        // set implementedTypes
+        coid.setImplementedTypes(classOrInterfaceTypeMerger.mergeCollection(first.getImplementedTypes(), second.getImplementedTypes()));
 
         // set type parameters
         AbstractNodeMerger<TypeParameter> typeParameterMerger = AbstractNodeMerger.getMerger(TypeParameter.class, isKeepFirstWhenConflict());

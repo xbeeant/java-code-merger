@@ -16,6 +16,7 @@ import io.github.xbeeant.javamerge.merger.ast.PackageDeclarationMerger;
 import io.github.xbeeant.javamerge.merger.ast.expr.*;
 import io.github.xbeeant.javamerge.merger.ast.stmt.BlockStmtMerger;
 import io.github.xbeeant.javamerge.merger.ast.stmt.ExpressionStmtMerger;
+import io.github.xbeeant.javamerge.merger.ast.stmt.ReturnStmtMerger;
 import io.github.xbeeant.javamerge.merger.ast.stmt.StatementMerger;
 import io.github.xbeeant.javamerge.merger.ast.type.*;
 import io.github.xbeeant.javamerge.merger.body.FieldDeclarationMerger;
@@ -57,13 +58,14 @@ public abstract class AbstractNodeMerger<N extends Node> {
 
         // ast.expr
         map.put(AnnotationExpr.class, new AnnotationExprMerger());
-        map.put(MemberValuePair.class, new MemberValuePairMerger());
-        map.put(NormalAnnotationExpr.class, new NormalAnnotationExprMerger());
-        map.put(SimpleName.class, new SimpleNameMerger());
-        map.put(Name.class, new NameMerger());
-        map.put(BinaryExpr.class, new BinaryExprMerger());
         map.put(AssignExpr.class, new AssignExprMerger());
+        map.put(BinaryExpr.class, new BinaryExprMerger());
         map.put(Expression.class, new ExpressionMerger());
+        map.put(SimpleName.class, new SimpleNameMerger());
+        map.put(MemberValuePair.class, new MemberValuePairMerger());
+        map.put(MethodCallExpr.class, new MethodCallExprMerger());
+        map.put(Name.class, new NameMerger());
+        map.put(NormalAnnotationExpr.class, new NormalAnnotationExprMerger());
         map.put(VariableDeclarationExpr.class, new VariableDeclarationExprMerger());
         map.put(ReturnStmt.class, new ReturnStmtMerger());
 

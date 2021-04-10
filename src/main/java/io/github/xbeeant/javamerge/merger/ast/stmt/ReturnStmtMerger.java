@@ -1,5 +1,6 @@
-package io.github.xbeeant.javamerge.merger.ast.expr;
+package io.github.xbeeant.javamerge.merger.ast.stmt;
 
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import io.github.xbeeant.javamerge.AbstractNodeMerger;
 
@@ -12,13 +13,15 @@ import io.github.xbeeant.javamerge.AbstractNodeMerger;
 public class ReturnStmtMerger extends AbstractNodeMerger<ReturnStmt> {
     @Override
     public boolean isEqual(ReturnStmt first, ReturnStmt second) {
-        return true;
+        return first.getExpression().equals(second.getExpression());
     }
 
     @Override
     public ReturnStmt doMerge(ReturnStmt first, ReturnStmt second) {
         ReturnStmt returnStmt = new ReturnStmt();
-
+        AbstractNodeMerger<Expression> expressionMerger = AbstractNodeMerger.getMerger(Expression.class, isKeepFirstWhenConflict());
+        Expression expression = expressionMerger.doMerge(first.getExpression(), second.getExpression());
+        returnStmt.setExpression(expression);
         return returnStmt;
     }
 }

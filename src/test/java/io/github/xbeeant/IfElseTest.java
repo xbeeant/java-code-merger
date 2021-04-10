@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  * @author xiaobiao
  * @date 2021/3/22
  */
-public class IfElseTest {
+class IfElseTest {
     JavaParser javaParser = new JavaParser();
 
     @Test

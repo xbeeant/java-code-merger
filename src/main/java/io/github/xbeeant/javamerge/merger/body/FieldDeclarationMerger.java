@@ -3,6 +3,7 @@ package io.github.xbeeant.javamerge.merger.body;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 import io.github.xbeeant.javamerge.AbstractNodeMerger;
 
 import java.util.Optional;
@@ -37,6 +38,10 @@ public class FieldDeclarationMerger extends AbstractNodeMerger<FieldDeclaration>
         if (commentOptional.isPresent()) {
             fieldDeclaration.setComment(commentOptional.get());
         }
+
+        // field annotation
+        AbstractNodeMerger<AnnotationExpr> annotationMerger = AbstractNodeMerger.getMerger(AnnotationExpr.class, isKeepFirstWhenConflict());
+        fieldDeclaration.setAnnotations(annotationMerger.mergeCollection(first.getAnnotations(), second.getAnnotations()));
 
         return fieldDeclaration;
     }

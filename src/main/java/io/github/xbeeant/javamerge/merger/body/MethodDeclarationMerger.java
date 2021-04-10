@@ -5,6 +5,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
 import io.github.xbeeant.javamerge.AbstractNodeMerger;
@@ -58,6 +59,10 @@ public class MethodDeclarationMerger extends AbstractNodeMerger<MethodDeclaratio
         // set parameters
         AbstractNodeMerger<Parameter> parameterMerger = AbstractNodeMerger.getMerger(Parameter.class, isKeepFirstWhenConflict());
         methodDeclaration.setParameters(parameterMerger.mergeCollection(first.getParameters(), second.getParameters()));
+
+        // annotation
+        AbstractNodeMerger<AnnotationExpr> annotationMerger = AbstractNodeMerger.getMerger(AnnotationExpr.class, isKeepFirstWhenConflict());
+        methodDeclaration.setAnnotations(annotationMerger.mergeCollection(first.getAnnotations(), second.getAnnotations()));
 
         return methodDeclaration;
     }
